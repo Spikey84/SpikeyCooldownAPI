@@ -36,8 +36,8 @@ public class API {
     }
 
 
-    private int getTimeInMin(Player player, int id) {
-        return PermissionUtils.getNumberedPermissionValueMin("cooldownapi.%s.%s".formatted(permBase, permissions.get(id)), player);
+    private int getTimeInMin(UUID uuid, int id) {
+        return PermissionUtils.getNumberedPermissionValueMin("cooldownapi.%s.%s".formatted(permBase, permissions.get(id)), uuid);
     }
 
     public void updateCooldown(UUID uuid, int id, Timestamp time) {
@@ -85,6 +85,16 @@ public class API {
 
     }
 
+    public String getRemainingFormattedLong(UUID uuid, int id) {
+        long millis = getRemainingMillis(uuid, id);
+
+        long minutes = (long) Math.floor(millis/60000);
+        long seconds = (millis/1000) % 60;
+
+        return String.format("%s minutes and %s seconds", minutes, seconds);
+
+    }
+
     public String getRemainingFormatted(Player player, int id) {
         return getRemainingFormatted(player.getUniqueId(), id);
     }
@@ -124,7 +134,7 @@ public class API {
 
         Long differenceMil = currentTime - timeOfLastRunning;
 
-        return (int) ((getTimeInMin(Bukkit.getPlayer(uuid), id)*60000) - (differenceMil));
+        return (int) ((getTimeInMin(uuid, id)*60000) - (differenceMil));
     }
 
 
