@@ -27,11 +27,19 @@ public class DatabaseManager {
             Class.forName("org.sqlite.JDBC");
 
             statement = connection.createStatement();
+//            String query = """
+//                    CREATE TABLE IF NOT EXISTS %s (\
+//                    id INTEGER, \
+//                    uuid VARCHAR NOT NULL,\
+//                    lastused TIMESTAMP NOT NULL\
+//                    );
+//                    """.formatted(tableName);
+
             String query = """
                     CREATE TABLE IF NOT EXISTS %s (\
                     id INTEGER, \
                     uuid VARCHAR NOT NULL,\
-                    lastused TIMESTAMP NOT NULL\
+                    lastused text NOT NULL\
                     );
                     """.formatted(tableName);
 

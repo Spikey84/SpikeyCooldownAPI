@@ -1,7 +1,7 @@
 main: me.spikey.spikeycooldownapi.Main
 
 name: SpikeyCooldownAPI
-version: 1.0
+version: 2.0
 api-version: 1.13
 
 depend: [LuckPerms]

@@ -8,13 +8,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
-public class PluginDAO {
+public class OldPluginDAO {
 
     public static void addPlugin(Connection connection, String name) {
 
@@ -63,8 +61,8 @@ public class PluginDAO {
         return plugins;
     }
 
-    public static HashMap<UUID, HashMap<Integer, LocalDateTime>> getPluginCooldowns(Connection connection, String pluginName) {
-        HashMap<UUID, HashMap<Integer, LocalDateTime>> cooldowns = Maps.newHashMap();
+    public static HashMap<UUID, HashMap<Integer, Timestamp>> getPluginCooldowns(Connection connection, String pluginName) {
+        HashMap<UUID, HashMap<Integer, Timestamp>> cooldowns = Maps.newHashMap();
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -80,7 +78,7 @@ public class PluginDAO {
             while (resultSet.next()) {
                 int id = (byte) resultSet.getInt("id");
                 UUID uuid = UUIDUtils.build(resultSet.getString("uuid"));
-                LocalDateTime time = LocalDateTime.parse(resultSet.getString("lastused"));
+                Timestamp time = resultSet.getTimestamp("lastused");
                 cooldowns.putIfAbsent(uuid, Maps.newHashMap());
                 cooldowns.get(uuid).put(id, time);
             }
@@ -111,7 +109,7 @@ public class PluginDAO {
         }
     }
 
-    public static void updateCooldown(Connection connection, String pluginName, UUID uuid, int id, LocalDateTime time) {
+    public static void updateCooldown(Connection connection, String pluginName, UUID uuid, int id, Timestamp timestamp) {
         PreparedStatement statement = null;
 
         try {
@@ -127,7 +125,7 @@ public class PluginDAO {
 
             statement.setString(1, UUIDUtils.strip(uuid));
             statement.setInt(2, id);
-            statement.setString(3, time.toString());
+            statement.setTimestamp(3, timestamp);
 
             statement.execute();
             statement.close();
@@ -136,12 +134,5 @@ public class PluginDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(LocalDateTime.now().toString());
-        System.out.println(LocalDateTime.now().getHour());
-        System.out.println(LocalDateTime.now().compareTo(LocalDateTime.now().minusDays(100)));
-        Double d = 0D;
     }
 }
